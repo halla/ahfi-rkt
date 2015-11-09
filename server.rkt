@@ -3,6 +3,7 @@
 (require web-server/servlet)
 (require web-server/servlet-env)
 (require web-server/dispatch)
+(require web-server/configuration/responders)
 (require db)
 
 (struct post (id body slug date_published title))
@@ -17,11 +18,16 @@
 
 (define head-scripts '("jquery-2.1.1.min.js" "boostrap.min.js" "mousetrap.min.js"))
 
+(define head-styles '("/static/bootstrap-3.2.0-dist/css/bootstrap.min.css"
+                      "static/style.css"))
+
 (define (page-head)
   '(head
     (meta [[http-equiv "Content-type"] [content "text/html; charset=utf-8"]])
     (meta [[name "viewport"] [content "width=device-width, initial-scale=1"]])
-    (link [[type "text/css"] [rel "stylesheet"]] "style.css")
+    (link [[type "text/css"] [rel "stylesheet"] [href "/static/bootstrap-3.2.0-dist/css/bootstrap.min.css"]] )
+    (link [[type "text/css"] [rel "stylesheet"] [href "static/style.css"]] )
+
     (title "Antti Halla")))
 
 (define (page-header)
@@ -40,6 +46,19 @@
   `(ul
     ,@(map render-post-head (blog-posts my-blog))))
 
+
+;; Dispatcher
+(define-values (dispatch site-url)
+  (dispatch-rules
+   [("static" (string-arg)) serve-static]
+   [("static" (string-arg) (string-arg)) serve-static]
+   [("static" (string-arg) (string-arg) (string-arg)) serve-static]
+   [("") start]))
+
+(define (serve-static req . files)
+  (file-response 200 #"OK" (apply build-path here "static" files)))
+
+
 (define (start request)
   (response/xexpr
    `(html ,(page-head)
@@ -56,6 +75,7 @@
         (render-post (apply post (vector->list post-data)))
         "Not found")))
   
+
 (define-values (blog-dispatch blog-url)
     (dispatch-rules
      [("") list-posts]
@@ -63,6 +83,13 @@
      [((string-arg) (string-arg) (string-arg) (string-arg)) review-post]
      [else list-posts]))
 
-(serve/servlet start
+(require racket/runtime-path)
+(define-runtime-path here ".")
+
+(serve/servlet dispatch
+               #:extra-files-paths (list (build-path here "static"))
                #:servlet-regexp #rx""
-               #:servlet-path "/")
+               #:servlet-path "/"
+               )
+
+
