@@ -16,17 +16,22 @@
               (in-query my-blog "SELECT * from posts ORDER BY date_published DESC")])
        (post id body slug date_published title)))
 
+
+
+
+
 (define head-scripts '("jquery-2.1.1.min.js" "boostrap.min.js" "mousetrap.min.js"))
 
-(define head-styles '("/static/bootstrap-3.2.0-dist/css/bootstrap.min.css"
+(define head-styles '("http://fonts.googleapis.com/css?family=Raleway"
+                      "http://fonts.googleapis.com/css?family=Lustria" 
+                      "/static/bootstrap-3.2.0-dist/css/bootstrap.min.css"
                       "static/style.css"))
 
 (define (page-head)
-  '(head
+  `(head
     (meta [[http-equiv "Content-type"] [content "text/html; charset=utf-8"]])
     (meta [[name "viewport"] [content "width=device-width, initial-scale=1"]])
-    (link [[type "text/css"] [rel "stylesheet"] [href "/static/bootstrap-3.2.0-dist/css/bootstrap.min.css"]] )
-    (link [[type "text/css"] [rel "stylesheet"] [href "static/style.css"]] )
+    ,@(map (λ (x) `(link [[type "text/css"] [rel "stylesheet"] [href ,x]])) head-styles)
 
     (title "Antti Halla")))
 
