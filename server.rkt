@@ -4,6 +4,9 @@
 (require web-server/servlet-env)
 (require web-server/dispatch)
 (require web-server/configuration/responders)
+(require web-server/templates)
+(require xml)
+
 (require db)
 
 (struct post (id body slug date_published title))
@@ -47,9 +50,9 @@
 (define (render-post-head post)
   `(div (a [[href "#"]] ,(post-title post))))
 
-(define (list-posts req)
-  `(ul
-    ,@(map render-post-head (blog-posts my-blog))))
+(define (list-posts)
+  (xexpr->string `(ul [[class "blog-list-simple list-unstyled"]]
+                    ,@(map render-post-head (blog-posts my-blog)))))
 
 
 ;; Dispatcher
@@ -69,7 +72,8 @@
    `(html ,(page-head)
           (body 
            ,(page-header)
-           ,(blog-dispatch request)))))
+           ,(blog-dispatch request)
+           ,(make-cdata #f #f (include-template "templates/footer.html"))))))
 
 (define (render-post post)
   (post-title post))
@@ -80,10 +84,12 @@
         (render-post (apply post (vector->list post-data)))
         "Not found")))
   
+(define (index-page req) 
+  (make-cdata #f #f (include-template "templates/index.html")))
 
 (define-values (blog-dispatch blog-url)
     (dispatch-rules
-     [("") list-posts]
+     [("") index-page]
      [("posts" (string-arg)) review-post]
      [((string-arg) (string-arg) (string-arg) (string-arg)) review-post]
      [else list-posts]))
