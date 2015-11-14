@@ -2,11 +2,20 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <h1>@(post-title post)</h1>
+      <h1>@(post-title this-post)</h1>
           
-          <div class="date_published">@(post-date_published post)</div>
+      <div class="date_published">@(post-date_published this-post)</div>
           
-          @(post-body post)
+      @(post-body this-post)
+
+      <div class="related-posts">
+        @when[prev-post]{
+	<a class="prev-post" href="#" title="Previous post <Left Arrow>">&laquo; Prev: <span class="prev-title">@(post-title prev-post)</span></a>
+        }
+        @when[next-post]{
+	<a class="next-post" href="{{next_url}}" title="Next post <Right Arrow>">Next: <span class="next-title">@(post-title next-post)</span> &raquo;</a>
+        }
+      </div>
     </div>
   </diV>
 </div>

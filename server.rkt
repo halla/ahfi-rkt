@@ -19,6 +19,17 @@
               (in-query my-blog "SELECT * from posts ORDER BY date_published DESC")])
        (post id body slug date_published title)))
 
+(define (get-next-post date_published)
+  (let ([post-data (query-maybe-row my-blog "SELECT * from posts WHERE date_published > ? ORDER BY date_published ASC LIMIT 1" date_published)])
+    (if post-data
+        (apply post (vector->list post-data))
+        #f)))
+
+(define (get-prev-post date_published)
+  (let ([post-data (query-maybe-row my-blog "SELECT * FROM posts where date_published < ? ORDER BY date_published DESC LIMIT 1" date_published)])
+    (if post-data
+        (apply post (vector->list post-data))
+        #f)))
 
 (define head-scripts '("/static/jquery-2.1.1.min.js" 
                        "/static/bootstrap-3.2.0-dist/js/bootstrap.min.js" 
@@ -75,13 +86,16 @@
            ,(blog-dispatch request)
            ,(make-cdata #f #f (include-template "templates/footer.html"))))))
 
-(define (render-post post)
-  (make-cdata #f #f (include-template "templates/post-view.html")))
+(define (render-post this-post)
+  (let ([prev-post (get-prev-post (post-date_published this-post))]
+        [next-post (get-next-post (post-date_published this-post))])
+    (make-cdata #f #f (include-template "templates/post-view.html"))))
 
 (define (review-post req year month slug empty)
   (let ([post-data (query-maybe-row my-blog "SELECT * from posts WHERE slug = ?" slug)])
     (if post-data
-        (render-post (apply post (vector->list post-data)))
+        (let ([this-post (apply post (vector->list post-data))])
+          (render-post this-post))
         "Not found")))
   
 (define (index-page req) 
