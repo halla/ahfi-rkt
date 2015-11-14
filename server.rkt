@@ -61,7 +61,7 @@
    [("static" (string-arg)) serve-static]
    [("static" (string-arg) (string-arg)) serve-static]
    [("static" (string-arg) (string-arg) (string-arg)) serve-static]
-   [("") start]))
+   [else start]))
 
 (define (serve-static req . files)
   (file-response 200 #"OK" (apply build-path here "static" files)))
@@ -76,7 +76,7 @@
            ,(make-cdata #f #f (include-template "templates/footer.html"))))))
 
 (define (render-post post)
-  (post-title post))
+  (make-cdata #f #f (include-template "templates/post-view.html")))
 
 (define (review-post req year month slug empty)
   (let ([post-data (query-maybe-row my-blog "SELECT * from posts WHERE slug = ?" slug)])
@@ -91,8 +91,8 @@
     (dispatch-rules
      [("") index-page]
      [("posts" (string-arg)) review-post]
-     [((string-arg) (string-arg) (string-arg) (string-arg)) review-post]
-     [else list-posts]))
+     [("blog" (string-arg) (string-arg) (string-arg) (string-arg)) review-post]
+     [else (λ (req) "Not found")]))
 
 (require racket/runtime-path)
 (define-runtime-path here ".")
