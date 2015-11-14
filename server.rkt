@@ -48,7 +48,7 @@
 
 
 (define (render-post-head post)
-  `(div (a [[href "#"]] ,(post-title post))))
+  `(li (a [[href "#"]] ,(post-title post))))
 
 (define (list-posts)
   (xexpr->string `(ul [[class "blog-list-simple list-unstyled"]]
