@@ -4,8 +4,7 @@
     <div class="col-md-12">
       <div class="date_published">@(post-date_published this-post)</div>
       <h1>@(post-title this-post)</h1>
-                
-      @(xexpr->string `(div [[class "post-body"]] ,@(parse-markdown (post-body this-post))))
+      @(xexpr->string `(div [[class "post-body"]] ,@(parse-markdown (string-replace (post-body this-post) "\r" ""))))
 
       <div class="related-posts">
         @(when prev-post @(xexpr->string (prev-link prev-post)))
