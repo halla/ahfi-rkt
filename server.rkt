@@ -6,6 +6,7 @@
 (require web-server/configuration/responders)
 (require web-server/templates)
 (require xml)
+(require (prefix-in s. srfi/19))
 (require (only-in markdown
                   parse-markdown))
 (require db)
@@ -49,19 +50,21 @@
                       "/static/style.css"))
 
 
+
 (define (gen-post-link-rel post) 
   (match-define (list yyyy mm dd)
     (string-split (post-date_published post) "-"))
   (string-append  "/blog/" yyyy "/" mm "/" (post-slug post) "/"))
 
-
+(define (gen-post-link-abs post)
+  (string-append "http://anttihalla.fi/" (gen-post-link-rel post)))
 
 
 (define (page-head)
   `(head
     (meta [[http-equiv "Content-type"] [content "text/html; charset=utf-8"]])
     (meta [[name "viewport"] [content "width=device-width, initial-scale=1"]])
-    ,@(map (λ (x) `(link [[type "text/css"] [rel "stylesheet"] [href ,x]])) head-styles)
+    ,@(map (λ (x) `(link [[type "text/css"] [rel "stylesheet"] [href ,x] [media "all"]])) head-styles)
     ,@(map (λ (x) `(script [[type "text/javascript"] [src ,x]])) head-scripts)
 
     (title "Antti Halla")))
@@ -83,12 +86,44 @@
                     ,@(map render-post-head (blog-posts my-blog)))))
 
 
+(define (sqldate->rfc822 sqldate)
+  (s.date->string (s.string->date sqldate "~Y-~m-~d") "~a, ~d ~b ~Y ~H:~M:~S ~z"))
+ 
+
+(define (render-post-body post)
+  (string-append 
+   "<![CDATA["
+   (xexpr->string `(div ,@(parse-markdown (string-replace (post-body post) "\r" ""))))
+   "]]>"))
+
+;; RSS
+(define (render-rss-item post)
+  `(item 
+    (title ,(post-title post))
+    (link ,(gen-post-link-abs post))
+    (guid ,(gen-post-link-abs post))
+    (pubDate ,(sqldate->rfc822 (post-date_published post)))
+    (description ,(make-cdata #f #f (render-post-body post)))
+    
+    ))
+
+(define (render-rss posts)
+  `(rss [[version "2.0"]]
+        (channel
+         (title "Antti Halla — Web & Data")
+         (link "http://anttihalla.fi")
+         (description "Exploring Web & Data")
+         ,@(map render-rss-item posts))))
+
+
+
 ;; Dispatcher
 (define-values (dispatch site-url)
   (dispatch-rules
    [("static" (string-arg)) serve-static]
    [("static" (string-arg) (string-arg)) serve-static]
    [("static" (string-arg) (string-arg) (string-arg)) serve-static]
+   [("blog" "feeds" "rss" (string-arg)) rss-feed]
    [else start]))
 
 (define (serve-static req . files)
@@ -97,6 +132,7 @@
 
 (define (start request)
   (response/xexpr
+ ;  #:preamble #"<!DOCTYPE html>\n"
    `(html ,(page-head)
           (body 
            ,(page-header)
@@ -117,6 +153,12 @@
   
 (define (index-page req) 
   (make-cdata #f #f (include-template "templates/index.html")))
+
+(define (rss-feed req _)
+
+  (response/xexpr 
+   #:preamble #"<?xml version='1.0' encoding='UTF-8'?>"
+   (render-rss (blog-posts my-blog))))
 
 (define-values (blog-dispatch blog-url)
     (dispatch-rules
