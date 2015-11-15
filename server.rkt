@@ -6,7 +6,8 @@
 (require web-server/configuration/responders)
 (require web-server/templates)
 (require xml)
-
+(require (only-in markdown
+                  parse-markdown))
 (require db)
 
 (struct post (id body slug date_published title))
@@ -31,6 +32,13 @@
         (apply post (vector->list post-data))
         #f)))
 
+(define (prev-link post)
+  `(a [[href ,(gen-post-link-rel post)] [class "prev-post"] [title "Previous post <Left Arrow>"]] "← " ,(post-title post)))
+
+(define (next-link post)
+  `(a [[href ,(gen-post-link-rel post)] [class "next-post"]  [title "Next post <Left Arrow>"]] ,(post-title post) " →"))
+
+
 (define head-scripts '("/static/jquery-2.1.1.min.js" 
                        "/static/bootstrap-3.2.0-dist/js/bootstrap.min.js" 
                        "/static/mousetrap.min.js"))
@@ -39,6 +47,15 @@
                       "http://fonts.googleapis.com/css?family=Lustria" 
                       "/static/bootstrap-3.2.0-dist/css/bootstrap.min.css"
                       "/static/style.css"))
+
+
+(define (gen-post-link-rel post) 
+  (match-define (list yyyy mm dd)
+    (string-split (post-date_published post) "-"))
+  (string-append  "/blog/" yyyy "/" mm "/" (post-slug post) "/"))
+
+
+
 
 (define (page-head)
   `(head
@@ -59,7 +76,7 @@
 
 
 (define (render-post-head post)
-  `(li (a [[href "#"]] ,(post-title post))))
+  `(li (a [[href ,(gen-post-link-rel post)]] ,(post-title post))))
 
 (define (list-posts)
   (xexpr->string `(ul [[class "blog-list-simple list-unstyled"]]
