@@ -28,6 +28,12 @@
 (define (render-gtm-tag) 
   (make-cdata #f #f (include-template "templates/gtm-tag.html")))
 
+(define (render-disqus post)
+  (let ([disqus_id (gen-post-link-abs post)]
+        [disqus_url (gen-post-link-abs post)]
+        [disqus_title (post-title post)])
+    (make-cdata #f #f (include-template "templates/disqus.html"))))
+
 (define (get-next-post date_published)
   (let ([post-data (query-maybe-row my-blog "SELECT * from posts WHERE date_published > ? ORDER BY date_published ASC LIMIT 1" date_published)])
     (if post-data
@@ -139,7 +145,7 @@
 
 (define (start request)
   (response/xexpr
- ;  #:preamble #"<!DOCTYPE html>\n"
+   #:preamble #"<!DOCTYPE html>\n"
    `(html ,(page-head)
           (body 
            ,(render-gtm-tag)
