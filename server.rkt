@@ -11,6 +11,9 @@
                   parse-markdown))
 (require db)
 
+(require "local-config.rkt")
+
+
 (struct post (id body slug date_published title))
 (struct blog (db))
 
@@ -20,6 +23,10 @@
   (for/list ([(id body slug date_published title) 
               (in-query my-blog "SELECT * from posts ORDER BY date_published DESC")])
        (post id body slug date_published title)))
+
+
+(define (render-gtm-tag) 
+  (make-cdata #f #f (include-template "templates/gtm-tag.html")))
 
 (define (get-next-post date_published)
   (let ([post-data (query-maybe-row my-blog "SELECT * from posts WHERE date_published > ? ORDER BY date_published ASC LIMIT 1" date_published)])
@@ -135,6 +142,7 @@
  ;  #:preamble #"<!DOCTYPE html>\n"
    `(html ,(page-head)
           (body 
+           ,(render-gtm-tag)
            ,(page-header)
            ,(blog-dispatch request)
            ,(make-cdata #f #f (include-template "templates/footer.html"))))))
