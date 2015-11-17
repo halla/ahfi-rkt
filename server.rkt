@@ -169,7 +169,6 @@
   (make-cdata #f #f (include-template "templates/index.html")))
 
 (define (rss-feed req _)
-
   (response/xexpr 
    #:preamble #"<?xml version='1.0' encoding='UTF-8'?>"
    (render-rss (blog-posts my-blog))))
@@ -190,4 +189,10 @@
                #:servlet-path "/"
                )
 
+
+(module+ test
+         (require rackunit)
+
+         (check-equal? 1 1)
+         (check-equal? (sqldate->rfc822 "2015-01-01") "Thu, 01 Jan 2015 00:00:00 +0000"))
 
