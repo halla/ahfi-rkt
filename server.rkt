@@ -9,20 +9,10 @@
 (require (prefix-in s. srfi/19))
 (require (only-in markdown
                   parse-markdown))
-(require db)
 
+(require "post.rkt")
 (require "local-config.rkt")
 
-
-(struct post (id body slug date_published title))
-(struct blog (db))
-
-(define my-blog (sqlite3-connect #:database "site-dev.db"))
-
-(define (blog-posts a-blog) 
-  (for/list ([(id body slug date_published title) 
-              (in-query my-blog "SELECT * from posts ORDER BY date_published DESC")])
-       (post id body slug date_published title)))
 
 
 (define (render-gtm-tag) 
@@ -33,18 +23,6 @@
         [disqus_url (gen-post-link-abs post)]
         [disqus_title (post-title post)])
     (make-cdata #f #f (include-template "templates/disqus.html"))))
-
-(define (get-next-post date_published)
-  (let ([post-data (query-maybe-row my-blog "SELECT * from posts WHERE date_published > ? ORDER BY date_published ASC LIMIT 1" date_published)])
-    (if post-data
-        (apply post (vector->list post-data))
-        #f)))
-
-(define (get-prev-post date_published)
-  (let ([post-data (query-maybe-row my-blog "SELECT * FROM posts where date_published < ? ORDER BY date_published DESC LIMIT 1" date_published)])
-    (if post-data
-        (apply post (vector->list post-data))
-        #f)))
 
 (define (prev-link post)
   `(a [[href ,(gen-post-link-rel post)] [class "prev-post"] [title "Previous post <Left Arrow>"]] "← " ,(post-title post)))
@@ -96,7 +74,7 @@
 
 (define (list-posts)
   (xexpr->string `(ul [[class "blog-list-simple list-unstyled"]]
-                    ,@(map render-post-head (blog-posts my-blog)))))
+                    ,@(map render-post-head (blog-posts)))))
 
 
 (define (sqldate->rfc822 sqldate)
@@ -159,7 +137,7 @@
     (make-cdata #f #f (include-template "templates/post-view.html"))))
 
 (define (review-post req year month slug empty)
-  (let ([post-data (query-maybe-row my-blog "SELECT * from posts WHERE slug = ?" slug)])
+  (let ([post-data (get-post slug)])
     (if post-data
         (let ([this-post (apply post (vector->list post-data))])
           (render-post this-post))
@@ -171,7 +149,7 @@
 (define (rss-feed req _)
   (response/xexpr 
    #:preamble #"<?xml version='1.0' encoding='UTF-8'?>"
-   (render-rss (blog-posts my-blog))))
+   (render-rss (blog-posts))))
 
 (define-values (blog-dispatch blog-url)
     (dispatch-rules
