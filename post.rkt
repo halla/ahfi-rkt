@@ -6,7 +6,7 @@
 
 (struct post (id body slug date_published title))
 
-(define my-blog (sqlite3-connect #:database "site-dev.db"))
+(define my-blog (sqlite3-connect #:database "db/site-dev.db"))
 
 (define (blog-posts) 
   (for/list ([(id body slug date_published title) 
@@ -27,6 +27,15 @@
     (if post-data
         (apply post (vector->list post-data))
         #f)))
+
+(define (gen-post-link-rel post) 
+  (match-define (list yyyy mm dd)
+    (string-split (post-date_published post) "-"))
+  (string-append  "/blog/" yyyy "/" mm "/" (post-slug post) "/"))
+
+(define (gen-post-link-abs post)
+  (string-append "http://anttihalla.fi/" (gen-post-link-rel post)))
+
 
 (provide (all-defined-out))
 (provide (struct-out post))

@@ -6,14 +6,14 @@
 (require web-server/configuration/responders)
 (require web-server/templates)
 (require xml)
-(require (prefix-in s. srfi/19))
+
 (require (only-in markdown
                   parse-markdown))
 
 (require "post.rkt")
 (require "view.rkt")
 (require "local-config.rkt")
-
+(require (prefix-in rss. "rss-view.rkt"))
 
 
 
@@ -32,13 +32,6 @@
     (make-cdata #f #f (include-template "templates/disqus.html"))))
 
 
-(define (gen-post-link-rel post) 
-  (match-define (list yyyy mm dd)
-    (string-split (post-date_published post) "-"))
-  (string-append  "/blog/" yyyy "/" mm "/" (post-slug post) "/"))
-
-(define (gen-post-link-abs post)
-  (string-append "http://anttihalla.fi/" (gen-post-link-rel post)))
 
 
 
@@ -49,36 +42,6 @@
 (define (list-posts)
   (xexpr->string `(ul [[class "blog-list-simple list-unstyled"]]
                     ,@(map render-post-head (blog-posts)))))
-
-
-(define (sqldate->rfc822 sqldate)
-  (s.date->string (s.string->date sqldate "~Y-~m-~d") "~a, ~d ~b ~Y ~H:~M:~S ~z"))
- 
-
-(define (render-post-body post)
-  (string-append 
-   "<![CDATA["
-   (xexpr->string `(div ,@(parse-markdown (string-replace (post-body post) "\r" ""))))
-   "]]>"))
-
-;; RSS
-(define (render-rss-item post)
-  `(item 
-    (title ,(post-title post))
-    (link ,(gen-post-link-abs post))
-    (guid ,(gen-post-link-abs post))
-    (pubDate ,(sqldate->rfc822 (post-date_published post)))
-    (description ,(make-cdata #f #f (render-post-body post)))
-    
-    ))
-
-(define (render-rss posts)
-  `(rss [[version "2.0"]]
-        (channel
-         (title "Antti Halla — Web & Data")
-         (link "http://anttihalla.fi")
-         (description "Exploring Web & Data")
-         ,@(map render-rss-item posts))))
 
 
 
@@ -123,7 +86,7 @@
 (define (rss-feed req _)
   (response/xexpr 
    #:preamble #"<?xml version='1.0' encoding='UTF-8'?>"
-   (render-rss (blog-posts))))
+   (rss.render-rss (blog-posts))))
 
 (define-values (blog-dispatch blog-url)
     (dispatch-rules
@@ -141,10 +104,4 @@
                #:servlet-path "/"
                )
 
-
-(module+ test
-         (require rackunit)
-
-         (check-equal? 1 1)
-         (check-equal? (sqldate->rfc822 "2015-01-01") "Thu, 01 Jan 2015 00:00:00 +0000"))
 
