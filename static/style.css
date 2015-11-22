@@ -1,6 +1,6 @@
 body { font-size: 20px;  font-family: 'Lustria', serif; background: url('/static/img/lightpaperfibers.png'); }
 
-h1 { font-size: 30px; }
+h1 { font-size: 30px; margin: 40px 0 30px;}
 h2 { font-size: 20px; }
 h3 { font-size: 16px; }
 
@@ -62,7 +62,7 @@ line-height: 1.3; }
 
 .article h2 { margin-top: 40px; }
 .post { margin-bottom: 60px;}
-.date_published { color: #777; font-size: 14px; margin-bottom: -10px;}
+.date_published { color: #999; font-size: 14px; margin-bottom: -10px;}
 
 
 .related-posts { overflow: hidden; font-family: 'Raleway', sans-serif; }
