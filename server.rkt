@@ -18,13 +18,13 @@
 
 
 
-
 ;; Dispatcher
 (define-values (dispatch site-url)
   (dispatch-rules
    [("static" (string-arg)) serve-static]
    [("static" (string-arg) (string-arg)) serve-static]
    [("static" (string-arg) (string-arg) (string-arg)) serve-static]
+   [("static" (string-arg) (string-arg) (string-arg) (string-arg)) serve-static]
    [("blog" "feeds" "rss" (string-arg)) rss-feed]
    [else start]))
 
