@@ -1,5 +1,13 @@
 #lang racket
 
+
+; INTERFACE
+
+(provide render-rss)
+
+
+; IMPLEMENTATION
+
 (require xml)
 (require "post.rkt")
 (require "util.rkt")
@@ -37,5 +45,3 @@
          (check-equal? 1 1)
          (check-equal? (sqldate->rfc822 "2015-01-01") "Thu, 01 Jan 2015 00:00:00 +0000"))
 
-
-(provide render-rss)

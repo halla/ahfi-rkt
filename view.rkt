@@ -1,5 +1,15 @@
 #lang racket
 
+; INTERFACE
+
+(provide (combine-out 
+          page-head 
+          page-header 
+          render-gtm-tag)) 
+
+
+; IMPLEMENTATION
+
 (require xml)
 (require web-server/templates)
 
@@ -34,6 +44,3 @@
 (define (render-gtm-tag) 
   (make-cdata #f #f (include-template "templates/gtm-tag.html")))
 
-
-
-(provide (combine-out page-head page-header render-gtm-tag)) 

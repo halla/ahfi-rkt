@@ -1,5 +1,18 @@
 #lang racket
 
+; INTERFACE
+
+(provide 
+ ;(review-post req year month slug empty)
+ ;post as cdata-xexpr html-string
+ review-post 
+ ;(list-posts)
+ ; list meta of all posts
+ list-posts)
+
+
+; IMPLEMENTATION
+
 (require "post.rkt")
 (require xml)
 (require web-server/templates)
@@ -43,4 +56,3 @@
         "Not found")))
 
 
-(provide review-post list-posts)

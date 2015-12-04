@@ -1,9 +1,16 @@
 #lang racket
 
+; INTERFACE
+
+(provide (all-defined-out))
+(provide (struct-out post))
+
+
+; IMPLEMENTATION
+
 (require db)
 
 (struct blog (db))
-
 (struct post (id body slug date_published title))
 
 (define my-blog (sqlite3-connect #:database "db/site-dev.db"))
@@ -36,6 +43,3 @@
 (define (gen-post-link-abs post)
   (string-append "http://anttihalla.fi/" (gen-post-link-rel post)))
 
-
-(provide (all-defined-out))
-(provide (struct-out post))
