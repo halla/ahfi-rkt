@@ -1,4 +1,40 @@
-body { font-size: 20px;  font-family: 'Lustria', serif; background: url('/static/img/lightpaperfibers.png'); }
+
+@font-face {
+    font-family: 'gandhi_serif';
+    src: url('gandhiserif/gandhiserif_regular_macroman/GandhiSerif-Regular-webfont.eot');
+    src: url('gandhiserif/gandhiserif_regular_macroman/GandhiSerif-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('gandhiserif/gandhiserif_regular_macroman/GandhiSerif-Regular-webfont.woff') format('woff'),
+         url('gandhiserif/gandhiserif_regular_macroman/GandhiSerif-Regular-webfont.ttf') format('truetype'),
+         url('gandhiserif/gandhiserif_regular_macroman/GandhiSerif-Regular-webfont.svg#gandhi_serifregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'gandhi_serif';
+    src: url('gandhiserif/gandhiserif_bold_macroman/GandhiSerif-Bold-webfont.eot');
+    src: url('gandhiserif/gandhiserif_bold_macroman/GandhiSerif-Bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('gandhiserif/gandhiserif_bold_macroman/GandhiSerif-Bold-webfont.woff') format('woff'),
+         url('gandhiserif/gandhiserif_bold_macroman/GandhiSerif-Bold-webfont.ttf') format('truetype'),
+         url('gandhiserif/gandhiserif_bold_macroman/GandhiSerif-Bold-webfont.svg#gandhi_serifbold') format('svg');
+    font-weight: bold;
+    font-style: bold;
+
+}
+
+@font-face {
+    font-family: 'gandhi_serif';
+    src: url('gandhiserif/gandhiserif_italic_macroman/GandhiSerif-Italic-webfont.eot');
+    src: url('gandhiserif/gandhiserif_italic_macroman/GandhiSerif-Italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('gandhiserif/gandhiserif_italic_macroman/GandhiSerif-Italic-webfont.woff') format('woff'),
+         url('gandhiserif/gandhiserif_italic_macroman/GandhiSerif-Italic-webfont.ttf') format('truetype'),
+         url('gandhiserif/gandhiserif_italic_macroman/GandhiSerif-Italic-webfont.svg#gandhi_serifitalic') format('svg');
+    font-weight: normal;
+    font-style: italic;
+}
+
+body { font-size: 20px;  font-family: 'gandhi_serif', serif; background: url('/static/img/lightpaperfibers.png'); color: #222; line-height: 1.5em; }
 
 h1 { font-size: 30px; margin: 40px 0 30px;}
 h2 { font-size: 20px; }
@@ -6,21 +42,26 @@ h3 { font-size: 16px; }
 
 h1, h2 { color: #0E805C; }
 h1, h2 { color: #333; }
-h1, h2, h3, h4, h5 { font-family: 'Raleway', sans-serif; text-transform: uppercase; letter-spacing: 0.04em; }
-li a { font-family: 'Raleway', sans-serif;}
+h1, h2, h3, h4, h5 { font-family: 'rubik', sans-serif; text-transform: uppercase; letter-spacing: 0.03em; color: #222; font-weight: 300; }
+li a { font-family: 'Rubik', sans-serif; font-weight: 300; }
 h2 a, h3 a, h4 a { color: #0E805C; }
+
 
 a { color: #B3006E; color: #0E805C;}
 a:hover, a:focus  { color: #B3006E; }
 
+p { margin-bottom: 0; }
+p + p {  text-indent: 2em;} 
 p img { margin-top: 5px; margin-bottom: 10px;}
 img { max-width: 100%}
 
+pre { margin: 2em 0; }
 
+leading-words { text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.85em}
 /*  HEADER */
 
 #header { border-bottom: 1px solid #ddd;  margin-bottom: 30px; font-size: 18px; padding: 5px 0;}
-#header a.site-title { color: #555;}
+#header a.site-title { color: #555;  letter-spacing: 0.06em; }
 
 /*  HEADER END */
 
@@ -33,7 +74,7 @@ line-height: 1.3; }
 .other-sites li a:hover { opacity: 0.1; background-color: black; margin: -10px; }
 .other-sites h3 { margin: 10px 0 5px 0; }
 
-.blog-list-simple { font-size: 1.1em; line-height: 1.3; font-family: 'Raleway', sans-serif;}
+.blog-list-simple { font-size: 1.1em; line-height: 1.3; font-family: 'Rubik', sans-serif;}
 .blog-list-simple li { margin-bottom:5px; font-size: 0.85em; }
 .blog-list-simple li:nth-child(-n+10) {
     font-size: 1em;
@@ -58,6 +99,8 @@ line-height: 1.3; }
 /* FOOTER end */
 
 
+
+
 /* --- VIEW POST --- */
 
 .article h2 { margin-top: 40px; }
@@ -65,7 +108,7 @@ line-height: 1.3; }
 .date_published { color: #999; font-size: 14px; margin-bottom: -10px;}
 
 
-.related-posts { overflow: hidden; font-family: 'Raleway', sans-serif; padding: 40px 0; }
+.related-posts { overflow: hidden; font-family: 'Rubik', sans-serif; padding: 40px 0; text-transform: uppercase; letter-spacing: 0.03em; font-size: 0.8em; }
 a.next-post, a.prev-post {
 	border: 1px solid #DDD;
 	padding: 10px;
@@ -74,10 +117,14 @@ a.next-post, a.prev-post {
 a.next-post { float: right; }
 a.prev-post { float: left;}
 
+.figure { margin: 2em 0; }
+.figure .caption { font-style: italic; font-size: 0.9em;}
+
 #sharebar { margin: 40px;
 text-align: center; }
 .twitter-share-button { vertical-align: text-bottom !important; margin-left: 25px; width: 100px !important}
 #___plusone_0 { vertical-align: text-bottom !important; }
+
 
 
 /* --- VIEW POST END --- */

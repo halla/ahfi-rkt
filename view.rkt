@@ -19,8 +19,7 @@
                        "/static/bootstrap-3.2.0-dist/js/bootstrap.min.js" 
                        "/static/mousetrap.min.js"))
 
-(define head-styles '("http://fonts.googleapis.com/css?family=Raleway"
-                      "http://fonts.googleapis.com/css?family=Lustria" 
+(define head-styles '("https://fonts.googleapis.com/css?family=Rubik:300italic,300,400,500"
                       "/static/bootstrap-3.2.0-dist/css/bootstrap.min.css"
                       "/static/style.css"))
 
