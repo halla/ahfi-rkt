@@ -1,5 +1,8 @@
 #lang racket
 
+
+(provide start-server)
+
 (require web-server/servlet)
 (require web-server/servlet-env)
 (require web-server/dispatch)
@@ -17,6 +20,12 @@
 (require (prefix-in rss. "rss-view.rkt"))
 
 
+(define (start-server) 
+(serve/servlet dispatch
+               #:extra-files-paths (list (build-path here "static"))
+               #:servlet-regexp #rx""
+               #:servlet-path "/"
+               ))
 
 ;; Dispatcher
 (define-values (dispatch site-url)
@@ -46,6 +55,7 @@
 (define (index-page req) 
   (make-cdata #f #f (include-template "templates/index.html")))
 
+
 (define (rss-feed req _)
   (response/xexpr 
    #:preamble #"<?xml version='1.0' encoding='UTF-8'?>"
@@ -61,10 +71,5 @@
 (require racket/runtime-path)
 (define-runtime-path here ".")
 
-(serve/servlet dispatch
-               #:extra-files-paths (list (build-path here "static"))
-               #:servlet-regexp #rx""
-               #:servlet-path "/"
-               )
 
 
