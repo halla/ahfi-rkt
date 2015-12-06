@@ -7,7 +7,6 @@
           page-header 
           render-gtm-tag)) 
 
-
 ; IMPLEMENTATION
 
 (require xml)

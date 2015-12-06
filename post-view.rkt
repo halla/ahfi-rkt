@@ -28,7 +28,6 @@
   `(a [[href ,(gen-post-link-rel post)] [class "next-post"]  [title "Next post <Left Arrow>"]] ,(post-title post) " →"))
 
 
-
 (define (render-disqus post)
   (let ([disqus_id (gen-post-link-abs post)]
         [disqus_url (gen-post-link-abs post)]
