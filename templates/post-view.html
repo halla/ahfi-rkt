@@ -2,7 +2,6 @@
 <div class="container article">
   <div class="row">
     <div class="col-md-9">
-      <div class="date_published">@(post-date_published this-post)</div>
       <h1>@(post-title this-post)</h1>
 
       @(xexpr->string `(div [[class "post-body"]] ,@(parse-markdown (string-replace (post-body this-post) "\r" ""))))
@@ -14,6 +13,9 @@
       <div id="comments">
         @(xexpr->string (render-disqus this-post))
       </div>
+    </div>
+    <div class="col-md-3">
+      <div class="date_published">@(post-date_published this-post)</div>
     </div>
   </diV>
 </div>
